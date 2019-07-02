@@ -21,12 +21,34 @@ static uint8_t *encodeByteArray(
     return message_to_encode;
 }
 
+static uint8_t *encodeByteArray(
+        uint8_t *message_to_encode,
+        uint8_t *key,
+        uint8_t *initialization_vector
+) {
+    struct AES_ctx ctx{};
+    AES_init_ctx_iv(&ctx, key, initialization_vector);
+    AES_ECB_encrypt(&ctx, message_to_encode);
+    return message_to_encode;
+}
+
 static uint8_t *decodeByteArray(
         uint8_t *message_to_decode,
         uint8_t *key
 ) {
     struct AES_ctx ctx{};
     AES_init_ctx(&ctx, key);
+    AES_ECB_decrypt(&ctx, message_to_decode);
+    return message_to_decode;
+}
+
+static uint8_t *decodeByteArray(
+        uint8_t *message_to_decode,
+        uint8_t *key,
+        uint8_t *initialization_vector
+) {
+    struct AES_ctx ctx{};
+    AES_init_ctx_iv(&ctx, key, initialization_vector);
     AES_ECB_decrypt(&ctx, message_to_decode);
     return message_to_decode;
 }
@@ -49,6 +71,26 @@ Java_com_mercandalli_android_sdk_feature_1aes_internal_AesInternal_encodeByteArr
 }
 
 extern "C" jbyteArray
+Java_com_mercandalli_android_sdk_feature_1aes_internal_AesInternal_encodeByteArrayWithIv(
+        JNIEnv *env,
+        jobject /* this */,
+        jbyteArray message_to_encode_,
+        jbyteArray key_,
+        jbyteArray initialization_vector_
+) {
+    auto *message_to_encode = (uint8_t *) env->GetByteArrayElements(message_to_encode_, 0);
+    auto *key = (uint8_t *) env->GetByteArrayElements(key_, 0);
+    auto *initialization_vector = (uint8_t *) env->GetByteArrayElements(initialization_vector_, 0);
+    auto message_to_encode_length = env->GetArrayLength(message_to_encode_);
+    uint8_t *output = encodeByteArray(message_to_encode, key, initialization_vector);
+    auto result = clientByteArrayFromUnit8(env, output, message_to_encode_length);
+    env->ReleaseByteArrayElements(message_to_encode_, (jbyte *) message_to_encode, 0);
+    env->ReleaseByteArrayElements(key_, (jbyte *) key, 0);
+    env->ReleaseByteArrayElements(initialization_vector_, (jbyte *) initialization_vector, 0);
+    return result;
+}
+
+extern "C" jbyteArray
 Java_com_mercandalli_android_sdk_feature_1aes_internal_AesInternal_decodeByteArray(
         JNIEnv *env,
         jobject /* this */,
@@ -61,6 +103,25 @@ Java_com_mercandalli_android_sdk_feature_1aes_internal_AesInternal_decodeByteArr
     uint8_t *output = decodeByteArray(message_to_decode, key);
     env->ReleaseByteArrayElements(message_to_decode_, (jbyte *) message_to_decode, 0);
     env->ReleaseByteArrayElements(key_, (jbyte *) key, 0);
+    return clientByteArrayFromUnit8(env, output, message_to_encode_length);
+}
+
+extern "C" jbyteArray
+Java_com_mercandalli_android_sdk_feature_1aes_internal_AesInternal_decodeByteArrayWithIv(
+        JNIEnv *env,
+        jobject /* this */,
+        jbyteArray message_to_decode_,
+        jbyteArray key_,
+        jbyteArray initialization_vector_
+) {
+    auto *message_to_decode = (uint8_t *) env->GetByteArrayElements(message_to_decode_, 0);
+    auto *key = (uint8_t *) env->GetByteArrayElements(key_, 0);
+    auto *initialization_vector = (uint8_t *) env->GetByteArrayElements(initialization_vector_, 0);
+    auto message_to_encode_length = env->GetArrayLength(message_to_decode_);
+    uint8_t *output = decodeByteArray(message_to_decode, key, initialization_vector);
+    env->ReleaseByteArrayElements(message_to_decode_, (jbyte *) message_to_decode, 0);
+    env->ReleaseByteArrayElements(key_, (jbyte *) key, 0);
+    env->ReleaseByteArrayElements(initialization_vector_, (jbyte *) initialization_vector, 0);
     return clientByteArrayFromUnit8(env, output, message_to_encode_length);
 }
 

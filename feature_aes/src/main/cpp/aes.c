@@ -531,7 +531,6 @@ void AES_CBC_decrypt_buffer(struct AES_ctx *ctx, uint8_t *buf, uint32_t length) 
         memcpy(ctx->Iv, storeNextIv, AES_BLOCKLEN);
         buf += AES_BLOCKLEN;
     }
-
 }
 
 #endif // #if defined(CBC) && (CBC == 1)

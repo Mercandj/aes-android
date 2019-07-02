@@ -11,9 +11,23 @@ class AesInternal {
         ): ByteArray
 
         @JvmStatic
+        external fun encodeByteArrayWithIv(
+            messageToEncode: ByteArray,
+            key: ByteArray,
+            initializationVector: ByteArray
+        ): ByteArray
+
+        @JvmStatic
         external fun decodeByteArray(
             messageToDecode: ByteArray,
             key: ByteArray
+        ): ByteArray
+
+        @JvmStatic
+        external fun decodeByteArrayWithIv(
+            messageToDecode: ByteArray,
+            key: ByteArray,
+            initializationVector: ByteArray
         ): ByteArray
 
         init {
