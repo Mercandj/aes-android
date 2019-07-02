@@ -1,0 +1,3 @@
+include ':feature_aes',
+        ':feature_aes_sample'
+rootProject.name = 'aes-android'
