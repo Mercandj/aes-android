@@ -11,8 +11,6 @@ import kotlin.math.min
 
 class MainActivity : AppCompatActivity() {
 
-    private val encode: View by bind(R.id.activity_main_encode)
-    private val decode: View by bind(R.id.activity_main_decode)
     private val test: View by bind(R.id.activity_main_test)
     private val aesManager by lazy {
         AesModule().createAesManager()
@@ -21,36 +19,13 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        encode.setOnClickListener {
-            encode()
-        }
-        decode.setOnClickListener {
-            decode()
-        }
         test.setOnClickListener {
             test()
         }
     }
 
-
-    private fun encode() {
-        val output = aesManager.encode(
-            "coucou",
-            "key"
-        )
-        toast("Output: $output")
-    }
-
-    private fun decode() {
-        val output = aesManager.decode(
-            "coucou",
-            "key"
-        )
-        toast("Output: $output")
-    }
-
     private fun test() {
-        val messageByteArray = byteArrayOfInts(
+        val messageByteArray = createByteArray(
             0x6b,
             0xc1,
             0xbe,
@@ -68,7 +43,7 @@ class MainActivity : AppCompatActivity() {
             0x17,
             0x2a
         )
-        val expectedOutputByteArray = byteArrayOfInts(
+        val expectedOutputByteArray = createByteArray(
             0x3a,
             0xd7,
             0x7b,
@@ -86,7 +61,7 @@ class MainActivity : AppCompatActivity() {
             0xef,
             0x97
         )
-        val keyByteArray = byteArrayOfInts(
+        val keyByteArray = createByteArray(
             0x2b,
             0x7e,
             0x15,
@@ -104,21 +79,21 @@ class MainActivity : AppCompatActivity() {
             0x4f,
             0x3c
         )
-        val output = aesManager.encode(
+        val outputByteArray = aesManager.encode(
             messageByteArray,
             keyByteArray
         )
-        if (expectedOutputByteArray.size != output.size) {
-            toast("Oops, ${messageByteArray.size} != ${output.size}")
-            val min = min(expectedOutputByteArray.size, output.size)
+        if (expectedOutputByteArray.size != outputByteArray.size) {
+            toast("Oops, ${messageByteArray.size} != ${outputByteArray.size}")
+            val min = min(expectedOutputByteArray.size, outputByteArray.size)
             for (i in 0 until min) {
-                Log.d("jm/debug", "" + expectedOutputByteArray[i] + " : " + output[i])
+                Log.d("jm/debug", "" + expectedOutputByteArray[i] + " : " + outputByteArray[i])
             }
             return
         }
         for (i in 0 until expectedOutputByteArray.size) {
-            Log.d("jm/debug", "" + expectedOutputByteArray[i] + " : " + output[i])
-            if (expectedOutputByteArray[i] != output[i]) {
+            Log.d("jm/debug", "" + expectedOutputByteArray[i] + " : " + outputByteArray[i])
+            if (expectedOutputByteArray[i] != outputByteArray[i]) {
                 toast("Oops, divergence on i: $i")
                 return
             }
@@ -131,6 +106,6 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
 
-        fun byteArrayOfInts(vararg ints: Int) = ByteArray(ints.size) { pos -> ints[pos].toByte() }
+        fun createByteArray(vararg ints: Int) = ByteArray(ints.size) { pos -> ints[pos].toByte() }
     }
 }

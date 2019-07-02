@@ -13,7 +13,7 @@ add_library(
         ./aes.h
         ./aes.hpp
         ./aes-lib.cpp
-        ./text.c
+        test.c
         ./android_debug.h
 )
 

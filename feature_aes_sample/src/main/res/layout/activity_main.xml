@@ -13,32 +13,6 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/activity_main_encode"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:background="?selectableItemBackground"
-            android:paddingStart="20dp"
-            android:paddingTop="10dp"
-            android:paddingEnd="20dp"
-            android:paddingBottom="10dp"
-            android:text="Encode"
-            android:textSize="32sp" />
-
-        <TextView
-            android:id="@+id/activity_main_decode"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:background="?selectableItemBackground"
-            android:paddingStart="20dp"
-            android:paddingTop="10dp"
-            android:paddingEnd="20dp"
-            android:paddingBottom="10dp"
-            android:text="Decode"
-            android:textSize="32sp" />
-
-        <TextView
             android:id="@+id/activity_main_test"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
