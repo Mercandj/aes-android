@@ -6,29 +6,17 @@ class AesInternal {
 
         @JvmStatic
         external fun encodeByteArray(
-            messageToEncode: ByteArray,
-            key: ByteArray
-        ): ByteArray
-
-        @JvmStatic
-        external fun encodeByteArrayWithIv(
-            messageToEncode: ByteArray,
+            message: ByteArray,
             key: ByteArray,
-            initializationVector: ByteArray
-        ): ByteArray
+            initializationVector: ByteArray?
+        ):ByteArray
 
         @JvmStatic
         external fun decodeByteArray(
-            messageToDecode: ByteArray,
-            key: ByteArray
-        ): ByteArray
-
-        @JvmStatic
-        external fun decodeByteArrayWithIv(
-            messageToDecode: ByteArray,
+            message: ByteArray,
             key: ByteArray,
-            initializationVector: ByteArray
-        ): ByteArray
+            initializationVector: ByteArray?
+        ):ByteArray
 
         init {
             System.loadLibrary("aes-lib")

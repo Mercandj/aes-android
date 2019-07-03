@@ -14,12 +14,12 @@ import android.widget.TextView
 import android.widget.Toast
 import com.mercandalli.android.apps.feature_file_aes_sample.ActivityUtils.bind
 import com.mercandalli.android.sdk.feature_aes.AesModule
+import com.mercandalli.android.sdk.feature_aes.AesMode
+import decodeBase64ToByteArray
+import decodeBase64ToString
+import encodeBase64ToString
 import java.io.File
 import kotlin.math.min
-import android.content.Context.CLIPBOARD_SERVICE
-import android.text.TextUtils.split
-import androidx.core.content.ContextCompat.getSystemService
-
 
 class MainActivity : AppCompatActivity() {
 
@@ -79,86 +79,51 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun computeOutput() {
-        outputUnclear.text = computeUnclearOutputByteArray()?.toHumanReadable() ?: ""
-        val clearOutputByteArray = computeClearOutputByteArray()
-        outputClear.text = if (clearOutputByteArray == null) {
-            null
-        } else {
-            String(clearOutputByteArray)
-        }
+        outputUnclear.text = computeUnclearOutputByteArray()?.encodeBase64ToString() ?: ""
+        outputClear.text = computeClearOutputByteArray()?.decodeBase64ToString() ?: ""
     }
 
     private fun computeUnclearOutputByteArray(): ByteArray? {
         val inputClearString = inputClear.text?.toString() ?: ""
         val keyString = key.text?.toString() ?: ""
         val initializationVectorString = initializationVector.text?.toString() ?: ""
-        return if (inputClearString == "" || keyString == "") {
-            null
-        } else if (initializationVectorString == "") {
-            aesManager.encode(
-                inputClearString.toByteArray(),
-                keyString.toByteArray()
-            )
-        } else {
-            aesManager.encode(
-                inputClearString.toByteArray(),
-                keyString.toByteArray(),
-                initializationVectorString.toByteArray()
-            )
+        if (inputClearString == "" || keyString == "") {
+            return null
         }
+        return aesManager.encode(
+            AesMode.ECB,
+            inputClearString.toByteArray().copyOf(),
+            keyString.toByteArray().copyOf(),
+            if (initializationVectorString == "") null else initializationVectorString.toByteArray().copyOf()
+        )
     }
 
     private fun computeClearOutputByteArray(): ByteArray? {
         val inputUnclearString = inputUnclear.text?.toString() ?: ""
         val keyString = key.text?.toString() ?: ""
         val initializationVectorString = initializationVector.text?.toString() ?: ""
-        return if (inputUnclearString == "" || keyString == "" || !inputUnclearString.contains(" ")) {
-            null
-        } else if (initializationVectorString == "") {
-            val split = inputUnclearString.split(" ")
-            val byteArray = ByteArray(split.size)
-            for (i in 0 until split.size) {
-                if (split[i] == "") {
-                    continue
-                }
-                val int = split[i].toInt()
-                byteArray[i] = int.toByte()
-            }
-            aesManager.decode(
-                byteArray,
-                keyString.toByteArray()
-            )
-        } else {
-            val split = inputUnclearString.split(" ")
-            val byteArray = ByteArray(split.size)
-            for (i in 0 until split.size) {
-                val int = split[i].toInt()
-                byteArray[i] = int.toByte()
-            }
-            aesManager.decode(
-                byteArray,
-                keyString.toByteArray(),
-                initializationVectorString.toByteArray()
-            )
+        if (inputUnclearString == "" || keyString == "" || !inputUnclearString.contains(" ")) {
+            return null
         }
-    }
-
-    private fun ByteArray.toHumanReadable(): String {
-        val result = StringBuilder()
-        for (i in 0 until size) {
-            val byte = get(i)
-            result.append(byte).append(" ")
-        }
-        return result.toString()
+        return aesManager.decode(
+            AesMode.ECB,
+            inputUnclearString.decodeBase64ToByteArray(),
+            keyString.toByteArray().copyOf(),
+            if (initializationVectorString == "") null else initializationVectorString.toByteArray().copyOf()
+        )
     }
 
     private fun encodeAssetFile() {
         if (encodedFile.exists()) {
             encodedFile.delete()
         }
-        val fileBytes = assetFile.readBytes()
-        val output = aesManager.encode(fileBytes, keyByteArray)
-        encodedFile.writeBytes(output)
+        val fileBytes = assetFile.readBytes().copyOf()
+        aesManager.encode(
+            AesMode.ECB,
+            fileBytes,
+            keyByteArray
+        )
+        encodedFile.writeBytes(fileBytes)
     }
 
     private fun decodeFile() {
@@ -169,13 +134,13 @@ class MainActivity : AppCompatActivity() {
         if (decodedFile.exists()) {
             decodedFile.delete()
         }
-        val bytes = encodedFile.readBytes()
-        decodedFile.writeBytes(
-            aesManager.decode(
-                bytes,
-                keyByteArray
-            )
+        val bytes = encodedFile.readBytes().copyOf()
+        aesManager.decode(
+            AesMode.ECB,
+            bytes,
+            keyByteArray
         )
+        decodedFile.writeBytes(bytes)
     }
 
     private fun createEncodedFile(): File {
@@ -183,7 +148,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun createDecodedFile(): File {
-        return File(filesDir, "ffmpeg_default_test_file_decoded.png")
+        return File(filesDir, "ffmpeg_default_test_file_decoded.mp3")
     }
 
     private fun test() {
@@ -223,8 +188,10 @@ class MainActivity : AppCompatActivity() {
             0xef,
             0x97
         )
-        val outputByteArray = aesManager.encode(
-            messageByteArray,
+        val outputByteArray = messageByteArray.copyOf()
+        aesManager.encode(
+            AesMode.ECB,
+            outputByteArray,
             keyByteArray
         )
         if (expectedOutputByteArray.size != outputByteArray.size) {

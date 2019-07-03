@@ -1,40 +1,31 @@
 package com.mercandalli.android.sdk.feature_aes.internal
 
 import com.mercandalli.android.sdk.feature_aes.AesManager
+import com.mercandalli.android.sdk.feature_aes.AesMode
 
 class AesManagerImpl : AesManager {
 
     override fun encode(
-        messageToEncode: ByteArray,
+        mode: AesMode,
+        message: ByteArray,
         key: ByteArray,
         initializationVector: ByteArray?
     ): ByteArray {
-        if (initializationVector == null) {
-            return AesInternal.encodeByteArray(
-                messageToEncode,
-                key
-            )
-        }
-        return AesInternal.encodeByteArrayWithIv(
-            messageToEncode,
+        return AesInternal.encodeByteArray(
+            message,
             key,
             initializationVector
         )
     }
 
     override fun decode(
-        messageToDecode: ByteArray,
+        mode: AesMode,
+        message: ByteArray,
         key: ByteArray,
         initializationVector: ByteArray?
     ): ByteArray {
-        if (initializationVector == null) {
-            return AesInternal.decodeByteArray(
-                messageToDecode,
-                key
-            )
-        }
-        return AesInternal.decodeByteArrayWithIv(
-            messageToDecode,
+        return AesInternal.decodeByteArray(
+            message,
             key,
             initializationVector
         )
