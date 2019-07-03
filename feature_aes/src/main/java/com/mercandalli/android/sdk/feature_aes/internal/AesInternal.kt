@@ -9,14 +9,19 @@ class AesInternal {
             message: ByteArray,
             key: ByteArray,
             initializationVector: ByteArray?
-        ):ByteArray
+        ): ByteArray
 
         @JvmStatic
         external fun decodeByteArray(
             message: ByteArray,
             key: ByteArray,
             initializationVector: ByteArray?
-        ):ByteArray
+        ): ByteArray
+
+        @JvmStatic
+        external fun debug(
+            debug: String
+        )
 
         init {
             System.loadLibrary("aes-lib")

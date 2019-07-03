@@ -146,7 +146,6 @@ class AesManagerAndroidTest {
         while (i >= 0 && bytes[i].toInt() == 0) {
             --i
         }
-
         return bytes.copyOf(i + 1)
     }
 

@@ -15,4 +15,8 @@ interface AesManager {
         key: ByteArray,
         initializationVector: ByteArray? = null
     ): ByteArray
+
+    fun debug(
+        string: String
+    )
 }

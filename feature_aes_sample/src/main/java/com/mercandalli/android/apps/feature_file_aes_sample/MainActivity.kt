@@ -16,7 +16,6 @@ import com.mercandalli.android.apps.feature_file_aes_sample.ActivityUtils.bind
 import com.mercandalli.android.sdk.feature_aes.AesModule
 import com.mercandalli.android.sdk.feature_aes.AesMode
 import decodeBase64ToByteArray
-import decodeBase64ToString
 import encodeBase64ToString
 import java.io.File
 import kotlin.math.min
@@ -28,7 +27,6 @@ class MainActivity : AppCompatActivity() {
     private val test: View by bind(R.id.activity_main_test)
     private val inputClear: EditText by bind(R.id.activity_main_input_clear)
     private val inputUnclear: EditText by bind(R.id.activity_main_input_unclear)
-    private val key: EditText by bind(R.id.activity_main_key)
     private val initializationVector: EditText by bind(R.id.activity_main_initialization_vector)
     private val outputUnclear: TextView by bind(R.id.activity_main_output_unclear)
     private val outputClear: TextView by bind(R.id.activity_main_output_clear)
@@ -73,44 +71,42 @@ class MainActivity : AppCompatActivity() {
         }
         inputClear.addTextChangedListener(textWatcher)
         inputUnclear.addTextChangedListener(textWatcher)
-        key.addTextChangedListener(textWatcher)
         initializationVector.addTextChangedListener(textWatcher)
         computeOutput()
     }
 
     private fun computeOutput() {
         outputUnclear.text = computeUnclearOutputByteArray()?.encodeBase64ToString() ?: ""
-        outputClear.text = computeClearOutputByteArray()?.decodeBase64ToString() ?: ""
+        val decoded = computeClearOutputByteArray()
+        outputClear.text = if (decoded == null) "" else String(decoded)
     }
 
     private fun computeUnclearOutputByteArray(): ByteArray? {
         val inputClearString = inputClear.text?.toString() ?: ""
-        val keyString = key.text?.toString() ?: ""
         val initializationVectorString = initializationVector.text?.toString() ?: ""
-        if (inputClearString == "" || keyString == "") {
+        if (inputClearString == "") {
             return null
         }
         return aesManager.encode(
             AesMode.ECB,
             inputClearString.toByteArray().copyOf(),
-            keyString.toByteArray().copyOf(),
+            keyByteArray.copyOf(),
             if (initializationVectorString == "") null else initializationVectorString.toByteArray().copyOf()
         )
     }
 
     private fun computeClearOutputByteArray(): ByteArray? {
         val inputUnclearString = inputUnclear.text?.toString() ?: ""
-        val keyString = key.text?.toString() ?: ""
         val initializationVectorString = initializationVector.text?.toString() ?: ""
-        if (inputUnclearString == "" || keyString == "" || !inputUnclearString.contains(" ")) {
+        if (inputUnclearString == "") {
             return null
         }
         return aesManager.decode(
             AesMode.ECB,
             inputUnclearString.decodeBase64ToByteArray(),
-            keyString.toByteArray().copyOf(),
+            keyByteArray.copyOf(),
             if (initializationVectorString == "") null else initializationVectorString.toByteArray().copyOf()
-        )
+        ).trim()
     }
 
     private fun encodeAssetFile() {
@@ -118,12 +114,13 @@ class MainActivity : AppCompatActivity() {
             encodedFile.delete()
         }
         val fileBytes = assetFile.readBytes().copyOf()
-        aesManager.encode(
-            AesMode.ECB,
-            fileBytes,
-            keyByteArray
+        encodedFile.writeBytes(
+            aesManager.encode(
+                AesMode.ECB,
+                fileBytes,
+                keyByteArray
+            )
         )
-        encodedFile.writeBytes(fileBytes)
     }
 
     private fun decodeFile() {
@@ -134,13 +131,12 @@ class MainActivity : AppCompatActivity() {
         if (decodedFile.exists()) {
             decodedFile.delete()
         }
-        val bytes = encodedFile.readBytes().copyOf()
-        aesManager.decode(
+        val bytes = aesManager.decode(
             AesMode.ECB,
-            bytes,
+            encodedFile.readBytes().copyOf(),
             keyByteArray
         )
-        decodedFile.writeBytes(bytes)
+        decodedFile.writeBytes(bytes.trim())
     }
 
     private fun createEncodedFile(): File {
@@ -238,5 +234,13 @@ class MainActivity : AppCompatActivity() {
 
         private fun createByteArray(vararg ints: Int) =
             ByteArray(ints.size) { pos -> ints[pos].toByte() }
+
+        private fun ByteArray.trim(): ByteArray {
+            var i = size - 1
+            while (i >= 0 && this[i].toInt() == 0) {
+                --i
+            }
+            return this.copyOf(i + 1)
+        }
     }
 }

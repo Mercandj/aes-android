@@ -1,9 +1,5 @@
 cmake_minimum_required(VERSION 3.4.1)
 
-# set (CMAKE_C_FLAGS "-std=gnu99 ${CMAKE_C_FLAGS}")
-# set (CMAKE_C_STANDARD 99)
-set(CMAKE_C_FLAGS "-std=c99")
-
 add_library(
         aes-lib
         SHARED
@@ -15,6 +11,8 @@ add_library(
         ./aes-lib.cpp
         test.c
         ./android_debug.h
+        ./file_manager.cpp
+        ./file_manager.h
 )
 
 find_library(

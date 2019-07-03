@@ -36,12 +36,6 @@
         </LinearLayout>
 
         <EditText
-            android:id="@+id/activity_main_key"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Key" />
-
-        <EditText
             android:id="@+id/activity_main_initialization_vector"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

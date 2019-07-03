@@ -17,7 +17,7 @@ android {
         externalNativeBuild {
             cmake {
                 // Sets a flag to enable format macro constants for the C++ compiler.
-                cppFlags "-D__STDC_FORMAT_MACROS"
+                // cppFlags "-D__STDC_FORMAT_MACROS"
             }
 
             ndk {

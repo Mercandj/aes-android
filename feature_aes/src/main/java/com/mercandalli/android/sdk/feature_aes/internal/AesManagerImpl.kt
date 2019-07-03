@@ -30,4 +30,8 @@ class AesManagerImpl : AesManager {
             initializationVector
         )
     }
+
+    override fun debug(string: String) {
+        AesInternal.debug(string)
+    }
 }

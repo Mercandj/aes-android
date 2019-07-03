@@ -1,9 +1,11 @@
 #include <stdint.h>
 #include <jni.h>
 #include <string>
+#include <fstream>
 #include "android_debug.h"
 #include "aes.hpp"
 #include "test.c"
+#include "file_manager.h"
 
 jbyteArray clientByteArrayFromUnit8(JNIEnv *env, uint8_t *array, int length) {
     jbyteArray output = env->NewByteArray(length);
@@ -156,5 +158,26 @@ Java_com_mercandalli_android_sdk_feature_1aes_internal_AesInternal_decodeByteArr
         iterations++;
     }
     return clientByteArrayFromUnit8(env, output, iterations * AES_BLOCKLEN * sizeof(uint8_t));
+}
+
+extern "C" void
+Java_com_mercandalli_android_sdk_feature_1aes_internal_AesInternal_debug(
+        JNIEnv *env,
+        jobject /* this */,
+        jstring debug_
+) {
+    const char *path = env->GetStringUTFChars(
+            debug_,
+            0
+    );
+    uint8_t message[16] = {(uint8_t) 0x2b, (uint8_t) 0x7e, (uint8_t) 0x15, (uint8_t) 0x16,
+                           (uint8_t) 0x28, (uint8_t) 0xae, (uint8_t) 0xd2, (uint8_t) 0xa6,
+                           (uint8_t) 0xab, (uint8_t) 0xf7, (uint8_t) 0x15, (uint8_t) 0x88,
+                           (uint8_t) 0x09, (uint8_t) 0xcf, (uint8_t) 0x4f, (uint8_t) 0x3c};
+
+    FileManager fileManager = FileManager();
+    std::ofstream *stream = fileManager.OpenToWrite(path);
+    fileManager.WriteToEnd(stream, message, 16);
+    fileManager.Close(stream);
 }
 
