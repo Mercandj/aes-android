@@ -1,3 +1,5 @@
 include ':feature_aes',
-        ':feature_aes_sample'
+        ':feature_aes_native',
+        ':feature_aes_native_sample',
+        ':feature_base64'
 rootProject.name = 'aes-android'
