@@ -11,8 +11,8 @@ add_library(
         ./aes-lib.cpp
         test.c
         ./android_debug.h
-        ./file_manager.cpp
-        ./file_manager.h
+        file_manager.cpp
+        file_manager.h
 )
 
 find_library(

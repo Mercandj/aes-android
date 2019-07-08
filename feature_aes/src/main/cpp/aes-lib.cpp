@@ -177,7 +177,7 @@ Java_com_mercandalli_android_sdk_feature_1aes_internal_AesInternal_debug(
 
     FileManager fileManager = FileManager();
     std::ofstream *stream = fileManager.OpenToWrite(path);
-    fileManager.WriteToEnd(stream, message, 16);
+    fileManager.Write(stream, message, 16);
     fileManager.Close(stream);
 }
 

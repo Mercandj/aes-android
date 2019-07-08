@@ -14,7 +14,12 @@ std::ofstream *FileManager::OpenToWrite(const char *path) {
     return &stream;
 }
 
-void FileManager::WriteToEnd(std::ofstream *stream, uint8_t *buffer, uint32_t length) {
+std::ofstream *FileManager::OpenToAppend(const char *path) {
+    std::ofstream stream(path, std::ios::out | std::ios::app);
+    return &stream;
+}
+
+void FileManager::Write(std::ofstream *stream, uint8_t *buffer, uint32_t length) {
     for (int i = 0; i < length; i++) {
         *stream << (int) buffer[i];
     }

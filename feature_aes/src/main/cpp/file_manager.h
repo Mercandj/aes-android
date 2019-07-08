@@ -17,7 +17,9 @@ public:
 
     std::ofstream* OpenToWrite(const char *path);
 
-    void WriteToEnd(std::ofstream *stream, uint8_t *buffer, uint32_t length);
+    std::ofstream* OpenToAppend(const char *path);
+
+    void Write(std::ofstream *stream, uint8_t *buffer, uint32_t length);
 
     void Close(std::ifstream *stream);
 

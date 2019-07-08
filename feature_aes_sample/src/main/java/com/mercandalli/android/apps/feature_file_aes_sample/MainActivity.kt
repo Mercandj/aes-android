@@ -101,6 +101,7 @@ class MainActivity : AppCompatActivity() {
         if (inputUnclearString == "") {
             return null
         }
+
         return aesManager.decode(
             AesMode.ECB,
             inputUnclearString.decodeBase64ToByteArray(),
