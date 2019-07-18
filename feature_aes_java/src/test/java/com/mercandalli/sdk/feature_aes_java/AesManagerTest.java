@@ -40,10 +40,10 @@ public class AesManagerTest {
     @Test
     public void generateKeyWithGoodSize() throws NoSuchAlgorithmException {
         // Given
-        AesManager aesManager = new AesModule().createAesManager();
+        AesJavaManager aesJavaManager = new AesJavaModule().createAesJavaManager();
 
         // When
-        byte[] bytes = aesManager.generateKey(AesKeySize.KEY_128);
+        byte[] bytes = aesJavaManager.generateKey(AesKeySize.KEY_128);
 
         // Then
         Assert.assertEquals(
@@ -55,9 +55,9 @@ public class AesManagerTest {
     @Test
     public void encodeWithOutputStream() throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IOException {
         // Given
-        AesManager aesManager = new AesModule().createAesManager();
+        AesJavaManager aesJavaManager = new AesJavaModule().createAesJavaManager();
         File clearFile = new File(getFileRoot().getParent(), "clear_reference.png");
-        AesCrypter aesCrypter = aesManager.getAesCrypter(
+        AesCrypter aesCrypter = aesJavaManager.getAesCrypter(
                 AesOpMode.CRYPT,
                 AesMode.ECB,
                 AesPadding.NO,

@@ -4,7 +4,7 @@ import com.mercandalli.android.sdk.feature_aes_native.internal.AesNativeManagerI
 
 class AesNativeModule {
 
-    fun createAesManager(): AesNativeManager {
+    fun createAesNativeManager(): AesNativeManager {
         return AesNativeManagerImpl()
     }
 }

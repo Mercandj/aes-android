@@ -27,7 +27,7 @@ class AesManagerGcmTest : AesManagerTest() {
     @Test
     fun encrypt() {
         // Given
-        val aesManager = AesModule().createAesManager()
+        val aesManager = AesKotlinModule().createAesManager()
 
         // When
         val aesCrypter = aesManager.getAesCrypter(
@@ -53,7 +53,7 @@ class AesManagerGcmTest : AesManagerTest() {
     @Test
     fun decrypt() {
         // Given
-        val aesManager = AesModule().createAesManager()
+        val aesManager = AesKotlinModule().createAesManager()
 
         // When
         val aesCrypter = aesManager.getAesCrypter(
@@ -79,7 +79,7 @@ class AesManagerGcmTest : AesManagerTest() {
     @Test
     fun encryptByPart() {
         // Given
-        val aesManager = AesModule().createAesManager()
+        val aesManager = AesKotlinModule().createAesManager()
 
         // When
         val messageBytes = getClearReference().readBytes()
